@@ -3,7 +3,7 @@ data "aws_lambda_function" "python-lambda" {
 }
 
 resource "aws_apigatewayv2_api" "http-gateway" {
-  name          = "python-newrelic-http-api"
+  name          = var.http-api-name
   protocol_type = "HTTP"
 }
 
