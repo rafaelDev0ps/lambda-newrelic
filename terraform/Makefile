@@ -8,7 +8,7 @@ plan-iam:
 	cd iam && terraform plan 
 
 apply-iam: 
-	cd iam && terraform apply
+	cd iam && terraform apply -auto-approve
 	
 destroy-iam:
 	cd iam && terraform destroy
@@ -20,7 +20,7 @@ plan-lambda:
 	cd lambda && terraform plan
 
 apply-lambda: 
-	cd lambda && terraform apply 
+	cd lambda && terraform apply -auto-approve
 
 destroy-lambda:
 	cd lambda && terraform destroy 
@@ -32,7 +32,7 @@ plan-api-gateway:
 	cd api-gateway && terraform plan 
 
 apply-api-gateway: 
-	cd api-gateway && terraform apply 
+	cd api-gateway && terraform apply -auto-approve
 
 destroy-api-gateway:
 	cd api-gateway && terraform destroy 

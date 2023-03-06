@@ -1,0 +1,56 @@
+name: Deploy infrastucture
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  prepare-lambda-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: hashicorp/setup-terraform@v1
+      - run: apt-get update && apt install zip
+      - run: zip app.zip app.py
+  
+  terraform-init:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: cd terraform && make init-all
+
+  terraform-plan:
+    needs: terraform-init
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: cd terraform && make plan-all
+
+  manual-approve:
+    needs: terraform-plan
+    environment:
+      name: approvers
+    runs-on: ubuntu-latest
+    steps:
+    - name: manual approve
+      run: |
+          echo "Manually approved"
+
+  terraform-apply:
+    needs: manual-approve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: cd terraform && make apply-all
