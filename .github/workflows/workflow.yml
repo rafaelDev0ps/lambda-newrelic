@@ -13,7 +13,7 @@ jobs:
       - run: sudo apt-get update && sudo apt install -y zip
       - run: zip app.zip app.py
   
-  terraform-init:
+  terraform-deploy:
     needs: prepare-lambda-file
     runs-on: ubuntu-latest
     env:
@@ -23,35 +23,37 @@ jobs:
       - uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v1
       - run: cd terraform && make init-all
-
-  terraform-plan:
-    needs: terraform-init
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    steps:
-      - uses: actions/checkout@master
-      - uses: hashicorp/setup-terraform@v1
       - run: cd terraform && make plan-all
-
-  manual-approve:
-    needs: terraform-plan
-    environment:
-      name: approvers
-    runs-on: ubuntu-latest
-    steps:
-    - name: manual approve
-      run: |
-          echo "Manually approved"
-
-  terraform-apply:
-    needs: manual-approve
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    steps:
-      - uses: actions/checkout@master
-      - uses: hashicorp/setup-terraform@v1
       - run: cd terraform && make apply-all
+
+        #  terraform-plan:
+        #    needs: terraform-init
+        #    runs-on: ubuntu-latest
+        #    env:
+        #      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #    steps:
+        #      - uses: actions/checkout@master
+        #      - uses: hashicorp/setup-terraform@v1
+        #      - run: cd terraform && make plan-all
+        #
+        #  manual-approve:
+        #    needs: terraform-plan
+        #    environment:
+        #      name: approvers
+        #    runs-on: ubuntu-latest
+        #    steps:
+        #    - name: manual approve
+        #      run: |
+        #          echo "Manually approved"
+        #
+        #  terraform-apply:
+        #    needs: manual-approve
+        #    runs-on: ubuntu-latest
+        #    env:
+        #      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #    steps:
+        #      - uses: actions/checkout@master
+        #      - uses: hashicorp/setup-terraform@v1
+        #      - run: cd terraform && make apply-all
