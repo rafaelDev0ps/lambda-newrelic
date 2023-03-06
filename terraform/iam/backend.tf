@@ -1,5 +1,7 @@
 terraform {
-  backend "local" {
-    path = "/Users/rafaeldemattos/Projetos/lambda-newrelic/terraform/iam/terraform.tfstate"
+  backend "s3" {
+    bucket = "rafael-terraform-states"
+    key    = "iam/terraform.tfstate"
+    region = "us-east-1"
   }
 }
