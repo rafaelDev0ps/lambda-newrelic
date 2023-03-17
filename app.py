@@ -1,6 +1,10 @@
 import os
 import json
-        
+import newrelic.agent
+
+newrelic.agent.initialize()
+
+@newrelic.agent.initialize()
 def lambda_handler(event, context):
     json_region = os.environ['AWS_REGION']
     return {
